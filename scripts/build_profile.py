@@ -71,8 +71,8 @@ def render(calendar, theme):
         raise ValueError("GitHub returned an empty contribution calendar")
     weeks = len(calendar["weeks"])
     peak = max(day[2] for day in days) or 1
-    width, height = 850, 480
-    x_start, y_start = 38, 327
+    width, height = 850, 400
+    x_start, y_start = 38, 255
     ux, uy, vx, vy = (width - 98) / weeks, 1.8, 7.2, 5.4
 
     def place(w, d, h=0):
@@ -121,31 +121,25 @@ def render(calendar, theme):
 
     name = html.escape(PROFILE["name"])
     handle = html.escape(PROFILE["username"])
-    tagline = html.escape(PROFILE["tagline"])
-    about = PROFILE["about"]
     text = [f'<text class="over" x="34" y="43" fill="{color["muted"]}">@{handle}</text>',
-            f'<text class="name" x="34" y="82" fill="{color["text"]}">{name.upper()}</text>',
-            f'<text class="tag" x="34" y="108" fill="{color["accent"]}">{tagline}</text>']
-    for index, line in enumerate(about):
-        text.append(f'<text class="about" x="34" y="{140 + index * 23}" fill="{color["muted"]}">'
-                    f'◆  {html.escape(line)}</text>')
-    text.append(f'<text class="count" x="34" y="218" fill="{color["text"]}">'
+            f'<text class="name" x="34" y="82" fill="{color["text"]}">{name.upper()}</text>']
+    text.append(f'<text class="count" x="34" y="138" fill="{color["text"]}">'
                 f'{calendar["totalContributions"]:,}'
                 f'<tspan class="detail" fill="{color["muted"]}" dx="9">contributions in the last year</tspan></text>')
     first = dt.date.fromisoformat(days[0][4]).strftime("%b %Y")
     last = dt.date.fromisoformat(days[-1][4]).strftime("%b %Y")
-    text += [f'<text class="detail" x="38" y="444" fill="{color["muted"]}">{first}</text>',
-             f'<text class="detail" x="816" y="444" text-anchor="end" fill="{color["muted"]}">{last}</text>']
+    text += [f'<text class="detail" x="38" y="370" fill="{color["muted"]}">{first}</text>',
+             f'<text class="detail" x="816" y="370" text-anchor="end" fill="{color["muted"]}">{last}</text>']
     label = html.escape(f'{PROFILE["name"]}: {calendar["totalContributions"]} GitHub contributions in the last year, {first} to {last}')
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
             f'viewBox="0 0 {width} {height}" role="img" aria-label="{label}">\n'
             f'<title>{name} — GitHub contribution skyline</title>\n'
             '<style>text{font-family:Arial,Helvetica,sans-serif}.over{font-size:12px;letter-spacing:.08em}'
-            '.name{font-size:30px;font-weight:800;letter-spacing:.04em}.tag{font-size:15px;font-weight:600}'
-            '.about{font-size:13px}.count{font-size:25px;font-weight:700}.detail{font-size:12px;font-weight:400}'
+            '.name{font-size:30px;font-weight:800;letter-spacing:.04em}'
+            '.count{font-size:25px;font-weight:700}.detail{font-size:12px;font-weight:400}'
             'text{opacity:0;animation:appear .6s ease-out forwards}@keyframes appear{to{opacity:1}}'
             '@media(prefers-reduced-motion:reduce){text{animation:none;opacity:1}}</style>\n'
-            f'<rect x=".5" y=".5" width="849" height="479" rx="14" fill="{color["bg"]}" '
+            f'<rect x=".5" y=".5" width="849" height="399" rx="14" fill="{color["bg"]}" '
             f'stroke="{color["border"]}"/>\n'
             + '\n'.join(parts + text) + '\n</svg>\n')
 
