@@ -1,0 +1,36 @@
+name: Update profile animation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - profile.json
+      - scripts/build_profile.py
+      - .github/workflows/update-profile.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Generate animated cards
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/build_profile.py
+      - name: Commit refreshed cards
+        run: |
+          git add assets/profile-dark.svg assets/profile-light.svg
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore: refresh profile animation'
+          git push
